@@ -14,8 +14,10 @@ from anime_frame_qa.io import (
     read_video_frames,
     write_image,
 )
+from anime_frame_qa.modules.color import enforce_color_consistency
 from anime_frame_qa.modules.deflicker import suppress_flicker_ema
 from anime_frame_qa.modules.denoise import DenoiseMethod, denoise
+from anime_frame_qa.modules.edge import process_edges
 
 
 @dataclass
@@ -25,6 +27,11 @@ class PipelineConfig:
     deflicker_threshold: float = 0.3
     denoise_enabled: bool = False
     denoise_method: DenoiseMethod = DenoiseMethod.BILATERAL
+    extract_edges: bool = False
+    edge_connect_gaps: bool = True
+    color_consistency: bool = False
+    color_window: int = 5
+    remove_bg: bool = False
 
 
 def process_image(image: np.ndarray, config: PipelineConfig) -> np.ndarray:
@@ -53,6 +60,11 @@ def process_video(
                     threshold=config.deflicker_threshold,
                 )
 
+            if config.color_consistency:
+                processed = enforce_color_consistency(
+                    processed, window_size=config.color_window
+                )
+
             for frame in processed:
                 writer.write(frame)
 
@@ -66,4 +78,22 @@ def run(input_path: Path, output_path: Path, config: PipelineConfig) -> None:
     else:
         image = read_image(input_path)
         result = process_image(image, config)
+
+        if config.extract_edges:
+            edge_result = process_edges(
+                image, connect=config.edge_connect_gaps
+            )
+            stem = output_path.stem
+            edge_dir = output_path.parent
+            write_image(edge_dir / f"{stem}_edges.png", edge_result.edges)
+            write_image(edge_dir / f"{stem}_thinned.png", edge_result.thinned)
+
+        if config.remove_bg:
+            from anime_frame_qa.modules.background import remove_background
+
+            bg_removed = remove_background(result)
+            stem = output_path.stem
+            bg_dir = output_path.parent
+            write_image(bg_dir / f"{stem}_nobg.png", bg_removed)
+
         write_image(output_path, result)

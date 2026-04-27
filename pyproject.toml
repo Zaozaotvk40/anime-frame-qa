@@ -5,9 +5,19 @@ description = "Quality assurance pipeline for AI-generated anime frames"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "opencv-python-headless>=4.9",
+    "opencv-contrib-python-headless>=4.9",
     "numpy>=1.26",
     "click>=8.1",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+cnn = [
+    "rembg>=2.0",
+    "simple-lama-inpainting>=0.1.0",
+]
+wandb = [
+    "wandb>=0.16",
 ]
 
 [tool.uv]
