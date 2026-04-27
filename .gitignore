@@ -27,3 +27,15 @@ Thumbs.db
 # Environment
 .env
 .env.local
+
+# Test / temp
+.pytest_cache/
+
+# Models (downloaded weights)
+models/
+*.onnx
+*.pth
+*.pt
+
+# W&B
+wandb/
