@@ -32,4 +32,5 @@ def load_config(path: Path) -> PipelineConfig:
         color_consistency=raw.get("color_consistency", False),
         color_window=int(raw.get("color_window", 5)),
         remove_bg=raw.get("remove_bg", False),
+        inpaint=raw.get("inpaint", False),
     )

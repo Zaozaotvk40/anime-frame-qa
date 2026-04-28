@@ -34,21 +34,6 @@ def detect_flicker(
     return distance > threshold, float(distance)
 
 
-def compute_brightness_ratio(
-    prev_frame: np.ndarray, curr_frame: np.ndarray
-) -> np.ndarray:
-    """Compute per-channel mean brightness ratio between frames."""
-    mean_prev = cv2.mean(prev_frame)[:3]
-    mean_curr = cv2.mean(curr_frame)[:3]
-    ratios = []
-    for mp, mc in zip(mean_prev, mean_curr):
-        if mc > 1e-6:
-            ratios.append(mp / mc)
-        else:
-            ratios.append(1.0)
-    return np.array(ratios, dtype=np.float64)
-
-
 def suppress_flicker_ema(
     frames: list[np.ndarray],
     alpha: float = 0.7,

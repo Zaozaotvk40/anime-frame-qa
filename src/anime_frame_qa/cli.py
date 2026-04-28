@@ -28,6 +28,8 @@ def main() -> None:
 @click.option("--extract-edges", is_flag=True, help="Extract and analyze edges/contours")
 @click.option("--color-consistency", is_flag=True, help="Enforce inter-frame color consistency (video only)")
 @click.option("--remove-bg", is_flag=True, help="Remove background (requires cnn extras)")
+@click.option("--inpaint", is_flag=True, help="Inpaint masked regions (requires cnn extras)")
+@click.option("--inpaint-mask", type=click.Path(exists=True, path_type=Path), help="Mask image for inpainting (white=repair)")
 @click.option("--all", "all_modules", is_flag=True, help="Enable all core OpenCV modules")
 def process(
     input_path: Path,
@@ -39,6 +41,8 @@ def process(
     extract_edges: bool,
     color_consistency: bool,
     remove_bg: bool,
+    inpaint: bool,
+    inpaint_mask: Path | None,
     all_modules: bool,
 ) -> None:
     """Process an image or video file."""
@@ -53,6 +57,8 @@ def process(
             extract_edges=extract_edges or all_modules,
             color_consistency=color_consistency or all_modules,
             remove_bg=remove_bg,
+            inpaint=inpaint,
+            inpaint_mask_path=inpaint_mask,
         )
 
     click.echo(f"Processing: {input_path}")

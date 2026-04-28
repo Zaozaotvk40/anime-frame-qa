@@ -41,17 +41,6 @@ def detect_color_unevenness(
     return ColorAnalysis(unevenness_score=score, unevenness_mask=mask)
 
 
-def compute_frame_histogram(frame: np.ndarray, bins: int = 256) -> np.ndarray:
-    """Compute per-channel histogram in Lab space."""
-    lab = cv2.cvtColor(frame, cv2.COLOR_BGR2Lab)
-    hists = []
-    for c in range(3):
-        h = cv2.calcHist([lab], [c], None, [bins], [0, 256])
-        cv2.normalize(h, h)
-        hists.append(h.flatten())
-    return np.stack(hists)
-
-
 def match_histograms(source: np.ndarray, reference: np.ndarray) -> np.ndarray:
     """Match source frame's color distribution to a reference frame.
 
