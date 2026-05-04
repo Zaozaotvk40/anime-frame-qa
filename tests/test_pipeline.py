@@ -48,3 +48,21 @@ def test_process_video_all(sample_video: Path, tmp_output: Path) -> None:
     config = PipelineConfig(deflicker=True, denoise_enabled=True)
     run(sample_video, output, config)
     assert output.exists()
+
+
+def test_process_directory(tmp_path: Path, tmp_output: Path) -> None:
+    import numpy as np
+
+    input_dir = tmp_path / "batch"
+    input_dir.mkdir()
+    for i in range(3):
+        img = np.random.randint(0, 255, (480, 640, 3), dtype=np.uint8)
+        cv2.imwrite(str(input_dir / f"frame_{i:03d}.png"), img)
+
+    output_dir = tmp_output / "batch_out"
+    config = PipelineConfig(denoise_enabled=True)
+    run(input_dir, output_dir, config)
+
+    assert (output_dir / "frame_000.png").exists()
+    assert (output_dir / "frame_001.png").exists()
+    assert (output_dir / "frame_002.png").exists()

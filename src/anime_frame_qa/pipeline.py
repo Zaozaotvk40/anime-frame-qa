@@ -71,39 +71,52 @@ def process_video(
                 writer.write(frame)
 
 
+_IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".webp"}
+
+
+def _process_single_image(
+    input_path: Path, output_path: Path, config: PipelineConfig
+) -> None:
+    image = read_image(input_path)
+    result = process_image(image, config)
+
+    if config.extract_edges:
+        edge_result = process_edges(image, connect=config.edge_connect_gaps)
+        stem = output_path.stem
+        edge_dir = output_path.parent
+        write_image(edge_dir / f"{stem}_edges.png", edge_result.edges)
+        write_image(edge_dir / f"{stem}_thinned.png", edge_result.thinned)
+
+    if config.remove_bg:
+        from anime_frame_qa.modules.background import remove_background
+
+        bg_removed = remove_background(result)
+        stem = output_path.stem
+        bg_dir = output_path.parent
+        write_image(bg_dir / f"{stem}_nobg.png", bg_removed)
+
+    if config.inpaint and config.inpaint_mask_path:
+        from anime_frame_qa.modules.inpaint import inpaint as run_inpaint
+        import cv2
+
+        mask = read_image(config.inpaint_mask_path)
+        mask_gray = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+        result = run_inpaint(result, mask_gray)
+
+    write_image(output_path, result)
+
+
 def run(input_path: Path, output_path: Path, config: PipelineConfig) -> None:
-    suffix = input_path.suffix.lower()
     video_exts = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
 
-    if suffix in video_exts:
+    if input_path.is_dir():
+        output_path.mkdir(parents=True, exist_ok=True)
+        for img_path in sorted(input_path.iterdir()):
+            if img_path.suffix.lower() in _IMAGE_EXTS:
+                _process_single_image(img_path, output_path / img_path.name, config)
+        return
+
+    if input_path.suffix.lower() in video_exts:
         process_video(input_path, output_path, config)
     else:
-        image = read_image(input_path)
-        result = process_image(image, config)
-
-        if config.extract_edges:
-            edge_result = process_edges(
-                image, connect=config.edge_connect_gaps
-            )
-            stem = output_path.stem
-            edge_dir = output_path.parent
-            write_image(edge_dir / f"{stem}_edges.png", edge_result.edges)
-            write_image(edge_dir / f"{stem}_thinned.png", edge_result.thinned)
-
-        if config.remove_bg:
-            from anime_frame_qa.modules.background import remove_background
-
-            bg_removed = remove_background(result)
-            stem = output_path.stem
-            bg_dir = output_path.parent
-            write_image(bg_dir / f"{stem}_nobg.png", bg_removed)
-
-        if config.inpaint and config.inpaint_mask_path:
-            from anime_frame_qa.modules.inpaint import inpaint as run_inpaint
-
-            mask = read_image(config.inpaint_mask_path)
-            import cv2
-            mask_gray = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
-            result = run_inpaint(result, mask_gray)
-
-        write_image(output_path, result)
+        _process_single_image(input_path, output_path, config)
