@@ -2,6 +2,9 @@
 CLAUDE.md
 INTERNALS.md
 
+# Notes / Q&A log
+notes/
+
 # Python
 __pycache__/
 *.py[cod]
