@@ -8,19 +8,19 @@ AI生成アニメ画像・動画に頻出するアーティファクト（フリ
 
 ### 自作アルゴリズム（OpenCV）
 
-| モジュール | 内容 | 画像 | 動画 |
-|-----------|------|:----:|:----:|
-| **フリッカー抑制** | ヒストグラム比較による検出 + EMA時間方向平滑化 | - | o |
-| **ノイズ抑制** | バイラテラルフィルタ / Non-Local Means（バンディング・モスキートノイズ対策） | o | o |
-| **輪郭抽出** | Canny + Zhang-Suen細線化 + 途切れ検出・接続 | o | o |
-| **色一貫性** | Lab色空間解析 + フレーム間ヒストグラムマッチング | o | o |
+| モジュール | 内容 | 画像 | 動画 | オプション |
+|-----------|------|:----:|:----:|-----------|
+| **フリッカー抑制** | ヒストグラム比較による検出 + EMA時間方向平滑化 | - | o | `--deflicker` |
+| **ノイズ抑制** | バイラテラルフィルタ / Non-Local Means（バンディング・モスキートノイズ対策） | o | o | `--denoise [--denoise-method bilateral\|nlm]` |
+| **輪郭抽出** | Canny + Zhang-Suen細線化 + 途切れ検出・接続 | o | o | `--extract-edges` |
+| **色一貫性** | 直近Nフレームのヒストグラムを参照にCDF-LUTで補正 | - | o | `--color-consistency` |
 
 ### 既存CNNモデル活用（オプショナル）
 
-| モジュール | モデル | 用途 |
-|-----------|--------|------|
-| **背景除去** | RMBG-2.0 (rembg経由) | 前景/背景分離 |
-| **修復** | LaMa (simple-lama-inpainting経由) | 問題領域のインペインティング |
+| モジュール | モデル | 用途 | 画像 | 動画 | オプション |
+|-----------|--------|------|:----:|:----:|-----------|
+| **背景除去** | RMBG-2.0 (rembg経由) | 前景/背景分離 | o | - | `--remove-bg` |
+| **修復** | LaMa (simple-lama-inpainting経由) | 問題領域のインペインティング | o | - | `--inpaint --inpaint-mask mask.png` |
 
 全CNNモデルはCPU実行可能。`uv pip install -e ".[cnn]"` でインストール。
 
@@ -52,6 +52,17 @@ uv run pipeline process input.png --extract-edges -o output.png
 uv run pipeline process input.png --all -o output.png
 ```
 
+### 画像のバッチ処理
+
+ディレクトリを渡すと内部の画像ファイルを一括処理します。各画像は独立して処理され、動画として扱われません。
+
+```bash
+# ディレクトリ内の全画像にノイズ抑制を適用
+uv run pipeline process frames/ --denoise -o output/
+```
+
+対応フォーマット: PNG / JPEG / BMP / TIFF / WebP
+
 ### 動画の処理
 
 ```bash
@@ -73,6 +84,9 @@ uv run pipeline process input.mp4 --config config/my_settings.yaml -o output.mp4
 
 ### パラメータスイープ（W&B連携オプション）
 
+**1枚の画像に対して複数のパラメータセットを試行し、PSNR/SSIMで効果を比較します。**
+バッチ処理（ディレクトリ入力）とは異なり、入力は常に画像1枚です。
+
 ```bash
 # ローカルスイープ
 uv run pipeline sweep input.png config/sweep_example.yaml -o sweep_results/
@@ -81,10 +95,14 @@ uv run pipeline sweep input.png config/sweep_example.yaml -o sweep_results/
 uv run pipeline sweep input.png config/sweep_example.yaml -o sweep_results/ --wandb-project anime-qa
 ```
 
-### 背景除去（CNN extras 必要）
+### 背景除去・インペインティング（CNN extras 必要）
 
 ```bash
+# 背景除去（RMBG-2.0）
 uv run pipeline process input.png --remove-bg -o output.png
+
+# インペインティング（LaMa）— マスク画像で修復対象領域を指定（白=修復）
+uv run pipeline process input.png --inpaint --inpaint-mask mask.png -o output.png
 ```
 
 ## アーキテクチャ

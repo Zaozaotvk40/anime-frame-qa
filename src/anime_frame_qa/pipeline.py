@@ -95,12 +95,12 @@ def _process_single_image(
         bg_dir = output_path.parent
         write_image(bg_dir / f"{stem}_nobg.png", bg_removed)
 
-    if config.inpaint and config.inpaint_mask_path:
+    if config.inpaint:
+        if config.inpaint_mask_path is None:
+            raise ValueError("--inpaint-mask が必要です: マスク画像のパスを指定してください")
         from anime_frame_qa.modules.inpaint import inpaint as run_inpaint
         import cv2
-
-        mask = read_image(config.inpaint_mask_path)
-        mask_gray = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+        mask_gray = cv2.cvtColor(read_image(config.inpaint_mask_path), cv2.COLOR_BGR2GRAY)
         result = run_inpaint(result, mask_gray)
 
     write_image(output_path, result)
