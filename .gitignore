@@ -5,6 +5,9 @@ INTERNALS.md
 # Notes / Q&A log
 notes/
 
+# Local scripts
+scripts/
+
 # Python
 __pycache__/
 *.py[cod]

@@ -21,7 +21,7 @@ def main() -> None:
 @click.option("--denoise", "denoise_enabled", is_flag=True, help="Enable noise reduction")
 @click.option(
     "--denoise-method",
-    type=click.Choice(["bilateral", "nlm"]),
+    type=click.Choice(["bilateral", "nlm", "banding"]),
     default="bilateral",
     help="Denoising method",
 )
