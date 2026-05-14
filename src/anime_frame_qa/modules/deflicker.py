@@ -36,13 +36,14 @@ def detect_flicker(
 
 def suppress_flicker_ema(
     frames: list[np.ndarray],
-    alpha: float = 0.7,
-    threshold: float = 0.3,
+    alpha: float = 0.5,
+    threshold: float = 0.15,
 ) -> list[np.ndarray]:
     """Suppress flicker in a sequence of frames using exponential moving average.
 
     Only applies correction when flicker is detected above threshold.
     The first frame is returned as-is and used as the brightness anchor.
+    EMA is updated with the corrected frame to avoid contamination by flickered frames.
     """
     if not frames:
         return []
@@ -54,7 +55,6 @@ def suppress_flicker_ema(
         flickering, _ = detect_flicker(frames[i - 1], frames[i], threshold)
 
         curr_mean = np.array(cv2.mean(frames[i])[:3], dtype=np.float64)
-        ema_mean = alpha * ema_mean + (1 - alpha) * curr_mean
 
         if flickering:
             correction = np.ones(3, dtype=np.float64)
@@ -67,7 +67,11 @@ def suppress_flicker_ema(
                 corrected[:, :, c] *= correction[c]
             corrected = np.clip(corrected, 0, 255).astype(np.uint8)
             result.append(corrected)
+            # update EMA with corrected frame to avoid contamination
+            corrected_mean = np.array(cv2.mean(corrected)[:3], dtype=np.float64)
+            ema_mean = alpha * ema_mean + (1 - alpha) * corrected_mean
         else:
             result.append(frames[i].copy())
+            ema_mean = alpha * ema_mean + (1 - alpha) * curr_mean
 
     return result
