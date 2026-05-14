@@ -28,7 +28,7 @@ class PipelineConfig:
     denoise_enabled: bool = False
     denoise_method: DenoiseMethod = DenoiseMethod.BILATERAL
     extract_edges: bool = False
-    edge_connect_gaps: bool = True
+    edge_connect_gaps: bool = False
     color_consistency: bool = False
     color_window: int = 5
     remove_bg: bool = False

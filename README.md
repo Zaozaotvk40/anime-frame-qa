@@ -1,12 +1,12 @@
 # anime-frame-qa
 
-AI生成アニメフレームの品質管理パイプライン。
+アニメフレームの品質管理パイプライン。
 
-AI生成アニメ画像・動画に頻出するアーティファクト（フリッカー、ノイズ、輪郭途切れ、色ムラ）を検出・補正します。
+アニメ画像・動画のアーティファクト（フリッカー、ノイズ、輪郭途切れ、色ムラ）を検出・補正します。
 
 ## 特徴
 
-### 自作アルゴリズム（OpenCV）
+### OpenCVの利用
 
 | モジュール       | 内容                                                                       | 画像  | 動画  | オプション                                                  |
 | ----------- | ------------------------------------------------------------------------ | :-: | :-: | ------------------------------------------------------ |
@@ -42,8 +42,14 @@ uv sync --extra wandb
 ### 画像の処理
 
 ```bash
-# ノイズ抑制
-uv run pipeline process input.png --denoise -o output.png
+# Gaussianノイズ除去
+uv run pipeline process input.png --denoise --denoise-method bilateral -o output.png
+
+# バンディング除去
+uv run pipeline process input.png --denoise --denoise-method banding -o output.png
+
+# モスキートノイズ除去
+uv run pipeline process input.png --denoise --denoise-method nlm -o output.png
 
 # 輪郭抽出（途切れ検出付き）
 uv run pipeline process input.png --extract-edges -o output.png
@@ -81,6 +87,19 @@ uv run pipeline process input.mp4 --all -o output.mp4
 ```bash
 uv run pipeline process input.mp4 --config config/my_settings.yaml -o output.mp4
 ```
+
+> **注意**: `--config` を指定すると、他のCLIフラグ（`--denoise` など）は**すべて無視**されます。YAMLファイルに全設定を記述してください。
+
+```yaml
+# 設定例
+deflicker: true
+denoise: true
+denoise_method: bilateral   # bilateral | nlm | banding
+extract_edges: false
+color_consistency: true
+```
+
+> **サブパラメータについて**: `d`・`sigma_color` などの詳細パラメータはYAMLからは設定できません。これらを変更したい場合は `sweep` コマンドを使用してください。
 
 ### パラメータスイープ（W&B連携オプション）
 

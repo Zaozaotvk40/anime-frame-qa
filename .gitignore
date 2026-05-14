@@ -8,6 +8,9 @@ notes/
 # Local scripts
 scripts/
 
+# README source images (working materials, not for repo)
+docs/source_images/
+
 # Python
 __pycache__/
 *.py[cod]

@@ -28,7 +28,7 @@ def load_config(path: Path) -> PipelineConfig:
         denoise_enabled=raw.get("denoise", False),
         denoise_method=denoise_method,
         extract_edges=raw.get("extract_edges", False),
-        edge_connect_gaps=raw.get("edge_connect_gaps", True),
+        edge_connect_gaps=raw.get("edge_connect_gaps", False),
         color_consistency=raw.get("color_consistency", False),
         color_window=int(raw.get("color_window", 5)),
         remove_bg=raw.get("remove_bg", False),
