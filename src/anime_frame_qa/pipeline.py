@@ -90,9 +90,8 @@ def _process_single_image(
         from anime_frame_qa.modules.background import remove_background
 
         bg_removed = remove_background(result)
-        stem = output_path.stem
-        bg_dir = output_path.parent
-        write_image(bg_dir / f"{stem}_nobg.png", bg_removed)
+        write_image(output_path, bg_removed)
+        return
 
     if config.inpaint:
         if config.inpaint_mask_path is None:
