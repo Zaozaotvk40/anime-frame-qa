@@ -1,14 +1,13 @@
-"""Color unevenness detection and inter-frame color consistency.
+"""Inter-frame color consistency for video frames.
 
-Uses HSV/Lab color space analysis for detecting color irregularities,
-and histogram matching for maintaining color consistency across frames.
+Uses Lab color space histogram matching with a sliding window reference
+to suppress gradual color drift across frames.
 """
 
 from __future__ import annotations
 
 import cv2
 import numpy as np
-
 
 
 def match_histograms(source: np.ndarray, reference: np.ndarray) -> np.ndarray:
