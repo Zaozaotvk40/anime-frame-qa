@@ -23,7 +23,7 @@ class EdgeResult:
 def extract_edges(
     image: np.ndarray,
     low_threshold: int = 50,
-    high_threshold: int = 150,
+    high_threshold: int = 100,
 ) -> np.ndarray:
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (3, 3), 0)
@@ -72,33 +72,28 @@ def detect_gaps(
     return gaps
 
 
-def connect_gaps(
-    thinned: np.ndarray, gaps: list[tuple[int, int]]
-) -> np.ndarray:
-    """Draw lines between detected gap endpoints to connect broken contours."""
-    result = thinned.copy()
-    _, w = result.shape
+def visualize_gaps(thinned: np.ndarray, gaps: list[tuple[int, int]]) -> np.ndarray:
+    """Return a BGR image with gap endpoints marked as red circles."""
+    vis = cv2.cvtColor(thinned, cv2.COLOR_GRAY2BGR)
+    _, w = thinned.shape
     for flat1, flat2 in gaps:
         y1, x1 = divmod(flat1, w)
         y2, x2 = divmod(flat2, w)
-        cv2.line(result, (x1, y1), (x2, y2), 255, 1)
-    return result
+        cv2.circle(vis, (x1, y1), 3, (0, 0, 255), -1)
+        cv2.circle(vis, (x2, y2), 3, (0, 0, 255), -1)
+    return vis
 
 
 def process_edges(
     image: np.ndarray,
     low_threshold: int = 50,
     high_threshold: int = 150,
-    connect: bool = True,
-    min_gap: int = 3,
-    max_gap: int = 15,
+    min_gap: int = 5,
+    max_gap: int = 8,
 ) -> EdgeResult:
     edges = extract_edges(image, low_threshold, high_threshold)
     thinned = thin_edges(edges)
     gaps = detect_gaps(thinned, min_gap, max_gap)
-
-    if connect and gaps:
-        thinned = connect_gaps(thinned, gaps)
 
     return EdgeResult(
         edges=edges,

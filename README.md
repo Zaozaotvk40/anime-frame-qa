@@ -12,7 +12,7 @@
 | ----------- | ------------------------------------------------------------------------ | :-: | :-: | ------------------------------------------------------ |
 | **フリッカー抑制** | ヒストグラム比較による検出 + EMA時間方向平滑化                                               |  -  |  o  | `--deflicker`                                          |
 | **ノイズ抑制**   | バイラテラルフィルタ（Gaussianノイズ）/ Non-Local Means（モスキートノイズ）/ バンディング除去（グラデーションの段差） |  o  |  o  | `--denoise [--denoise-method bilateral\|nlm\|banding]` |
-| **輪郭抽出**    | Canny + Zhang-Suen細線化 + 途切れ検出・接続                                         |  o  |  o  | `--extract-edges`                                      |
+| **輪郭抽出**    | Canny + Zhang-Suen細線化 + 途切れ検出・可視化                                        |  o  |  o  | `--extract-edges`                                      |
 | **色一貫性**    | 直近Nフレームのヒストグラムを参照にCDF-LUTで補正                                             |  -  |  o  | `--color-consistency`                                  |
 
 ### 既存CNNモデル活用（オプショナル）
@@ -51,8 +51,10 @@ uv run pipeline process input.png --denoise --denoise-method banding -o output.p
 # モスキートノイズ除去
 uv run pipeline process input.png --denoise --denoise-method nlm -o output.png
 
-# 輪郭抽出（途切れ検出付き）
+# 輪郭抽出・途切れ検出（細線化済み画像 + ギャップ位置を赤丸でマーク）
 uv run pipeline process input.png --extract-edges -o output.png
+# → output.png にギャップ可視化済みのthinned画像を出力
+# → CLI に "edges: N gap(s) detected" を表示
 
 # 全コアモジュール適用
 uv run pipeline process input.png --all -o output.png
@@ -158,7 +160,7 @@ src/anime_frame_qa/
 2. Zhang-Suen形態学的細線化（1ピクセル幅）
 3. 近傍カウントによる端点検出
 4. 距離範囲内の端点ペアをギャップとして検出
-5. オプションでギャップ間を線で接続
+5. 検出したギャップ端点を赤丸でマークして出力（診断ツールとして位置づけ）
 
 ### 色一貫性
 - **色ムラ検出**: Lab色空間でローカル平均とグローバル平均の差を計測

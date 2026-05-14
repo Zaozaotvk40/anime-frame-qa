@@ -17,7 +17,7 @@ from anime_frame_qa.io import (
 from anime_frame_qa.modules.color import enforce_color_consistency
 from anime_frame_qa.modules.deflicker import suppress_flicker_ema
 from anime_frame_qa.modules.denoise import DenoiseMethod, denoise
-from anime_frame_qa.modules.edge import process_edges
+from anime_frame_qa.modules.edge import process_edges, visualize_gaps
 
 
 @dataclass
@@ -28,7 +28,6 @@ class PipelineConfig:
     denoise_enabled: bool = False
     denoise_method: DenoiseMethod = DenoiseMethod.BILATERAL
     extract_edges: bool = False
-    edge_connect_gaps: bool = False
     color_consistency: bool = False
     color_window: int = 5
     remove_bg: bool = False
@@ -81,11 +80,11 @@ def _process_single_image(
     result = process_image(image, config)
 
     if config.extract_edges:
-        edge_result = process_edges(image, connect=config.edge_connect_gaps)
-        stem = output_path.stem
-        edge_dir = output_path.parent
-        write_image(edge_dir / f"{stem}_edges.png", edge_result.edges)
-        write_image(edge_dir / f"{stem}_thinned.png", edge_result.thinned)
+        edge_result = process_edges(image)
+        vis = visualize_gaps(edge_result.thinned, edge_result.gaps)
+        print(f"  edges: {edge_result.gap_count} gap(s) detected")
+        write_image(output_path, vis)
+        return
 
     if config.remove_bg:
         from anime_frame_qa.modules.background import remove_background
