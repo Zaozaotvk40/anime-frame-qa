@@ -23,11 +23,14 @@ class EdgeResult:
 def extract_edges(
     image: np.ndarray,
     low_threshold: int = 50,
-    high_threshold: int = 100,
+    high_threshold: int = 80,
 ) -> np.ndarray:
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (3, 3), 0)
-    return cv2.Canny(blurred, low_threshold, high_threshold)
+    lab = cv2.cvtColor(image, cv2.COLOR_BGR2Lab)
+    blurred = cv2.GaussianBlur(lab, (3, 3), 0)
+    edges_l = cv2.Canny(blurred[:, :, 0], low_threshold, high_threshold)
+    edges_a = cv2.Canny(blurred[:, :, 1], low_threshold, high_threshold)
+    edges_b = cv2.Canny(blurred[:, :, 2], low_threshold, high_threshold)
+    return cv2.bitwise_or(edges_l, cv2.bitwise_or(edges_a, edges_b))
 
 
 def thin_edges(edges: np.ndarray) -> np.ndarray:
