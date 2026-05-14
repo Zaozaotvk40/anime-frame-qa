@@ -2,7 +2,7 @@
 
 アニメフレームの品質管理パイプライン。
 
-アニメ画像・動画のアーティファクト（フリッカー、ノイズ、輪郭途切れ、色ムラ）を検出・補正します。
+アニメ画像・動画のアーティファクト（フリッカー、ノイズ、輪郭途切れ、フレーム間色ずれ）を検出・補正します。
 
 ## 特徴
 
@@ -17,12 +17,12 @@
 
 ### 既存CNNモデル活用（オプショナル）
 
-| モジュール | モデル | 用途 | 画像 | 動画 | オプション |
-|-----------|--------|------|:----:|:----:|-----------|
-| **背景除去** | RMBG-2.0 (rembg経由) | 前景/背景分離 | o | - | `--remove-bg` |
-| **修復** | LaMa (simple-lama-inpainting経由) | 問題領域のインペインティング | o | - | `--inpaint --inpaint-mask mask.png` |
+| モジュール    | モデル                             | 用途             | 画像  | 動画  | オプション                               |
+| -------- | ------------------------------- | -------------- | :-: | :-: | ----------------------------------- |
+| **背景除去** | isnet-anime (rembg経由)           | 前景/背景分離        |  o  |  -  | `--remove-bg`                       |
+| **修復**   | LaMa (simple-lama-inpainting経由) | 問題領域のインペインティング |  o  |  -  | `--inpaint --inpaint-mask mask.png` |
 
-全CNNモデルはCPU実行可能。`uv pip install -e ".[cnn]"` でインストール。
+全CNNモデルはCPU実行可能。`uv sync --extra cnn` でインストール。
 
 ## インストール
 
@@ -121,7 +121,7 @@ uv run pipeline sweep input.png config/sweep_example.yaml -o sweep_results/ --wa
 ### 背景除去・インペインティング（CNN extras 必要）
 
 ```bash
-# 背景除去（RMBG-2.0）
+# 背景除去（isnet-anime、初回実行時にモデル自動ダウンロード ~170MB）
 uv run pipeline process input.png --remove-bg -o output.png
 
 # インペインティング（LaMa）— マスク画像で修復対象領域を指定（白=修復）
@@ -142,8 +142,8 @@ src/anime_frame_qa/
     deflicker.py      フリッカー検出・抑制
     denoise.py        ノイズ抑制（bilateral / NLM）
     edge.py           輪郭抽出・細線化・途切れ検出
-    color.py          色ムラ検出・フレーム間色一貫性
-    background.py     背景除去（RMBG-2.0、オプショナル）
+    color.py          フレーム間色一貫性
+    background.py     背景除去（isnet-anime、オプショナル）
     inpaint.py        インペインティング（LaMa、オプショナル）
 ```
 
@@ -165,8 +165,7 @@ src/anime_frame_qa/
 5. 検出したギャップ端点を赤丸でマークして出力（診断ツールとして位置づけ）
 
 ### 色一貫性
-- **色ムラ検出**: Lab色空間でローカル平均とグローバル平均の差を計測
-- **フレーム間マッチング**: 直近Nフレームのスライディングウィンドウから参照を構築し、CDF-LUTベースのヒストグラムマッチングを適用
+直近Nフレームのスライディングウィンドウから参照を構築し、CDF-LUTベースのヒストグラムマッチングを適用。
 
 ## テスト
 

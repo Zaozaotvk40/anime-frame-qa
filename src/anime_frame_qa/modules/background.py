@@ -18,8 +18,10 @@ def remove_background(image: np.ndarray) -> np.ndarray:
             "Install with: uv pip install anime-frame-qa[cnn]"
         )
 
+    from rembg import new_session
     from PIL import Image
 
+    session = new_session("isnet-anime")
     pil_img = Image.fromarray(image[:, :, ::-1])  # BGR -> RGB
-    result = remove(pil_img)
-    return np.array(result)[:, :, ::-1]  # RGBA -> BGRA
+    result = remove(pil_img, session=session)
+    return np.array(result)[:, :, [2, 1, 0, 3]]  # RGBA -> BGRA
