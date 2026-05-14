@@ -22,8 +22,8 @@ class EdgeResult:
 
 def extract_edges(
     image: np.ndarray,
-    low_threshold: int = 50,
-    high_threshold: int = 80,
+    low_threshold: int,
+    high_threshold: int,
 ) -> np.ndarray:
     lab = cv2.cvtColor(image, cv2.COLOR_BGR2Lab)
     blurred = cv2.GaussianBlur(lab, (3, 3), 0)
@@ -90,7 +90,7 @@ def visualize_gaps(thinned: np.ndarray, gaps: list[tuple[int, int]]) -> np.ndarr
 def process_edges(
     image: np.ndarray,
     low_threshold: int = 50,
-    high_threshold: int = 150,
+    high_threshold: int = 80,
     min_gap: int = 5,
     max_gap: int = 8,
 ) -> EdgeResult:

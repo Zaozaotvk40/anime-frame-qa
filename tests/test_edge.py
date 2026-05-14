@@ -11,7 +11,7 @@ def test_extract_edges() -> None:
     import cv2
     cv2.line(img, *cv2_line_args, (255, 255, 255), 2)
 
-    edges = extract_edges(img)
+    edges = extract_edges(img, low_threshold=50, high_threshold=80)
     assert edges.shape == (100, 100)
     assert edges.dtype == np.uint8
     assert np.any(edges > 0)
@@ -22,7 +22,7 @@ def test_thin_edges() -> None:
     import cv2
     cv2.rectangle(img, (20, 20), (80, 80), (255, 255, 255), 3)
 
-    edges = extract_edges(img)
+    edges = extract_edges(img, low_threshold=50, high_threshold=80)
     thinned = thin_edges(edges)
     assert thinned.shape == edges.shape
     assert np.sum(thinned > 0) <= np.sum(edges > 0)
