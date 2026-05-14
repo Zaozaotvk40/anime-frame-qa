@@ -13,7 +13,7 @@ dependencies = [
 
 [project.optional-dependencies]
 cnn = [
-    "rembg>=2.0",
+    "rembg[cpu]>=2.0",
     "simple-lama-inpainting>=0.1.0",
 ]
 wandb = [
