@@ -24,6 +24,11 @@
 
 全CNNモデルはCPU実行可能。`uv sync --extra cnn` でインストール。
 
+> **注意**: `rembg` が `opencv-python` を引き込み、`opencv-contrib-python-headless` と競合する場合があります。Zhang-Suen細線化（`--extract-edges`）が動かなくなった場合は以下を実行してください：
+> ```bash
+> uv pip install --force-reinstall opencv-contrib-python-headless
+> ```
+
 ## インストール
 
 ```bash

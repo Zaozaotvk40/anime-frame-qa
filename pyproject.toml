@@ -24,6 +24,12 @@ wandb = [
 dev-dependencies = [
     "pytest>=8.0",
 ]
+# rembg pulls in opencv-python as a transitive dependency, which overwrites
+# opencv-contrib-python-headless and breaks ximgproc (Zhang-Suen thinning).
+# Override to ensure the contrib version is always used.
+override-dependencies = [
+    "opencv-python>=4.9",
+]
 
 [build-system]
 requires = ["hatchling"]
