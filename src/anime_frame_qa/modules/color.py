@@ -6,39 +6,9 @@ and histogram matching for maintaining color consistency across frames.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 import cv2
 import numpy as np
 
-
-@dataclass
-class ColorAnalysis:
-    unevenness_score: float
-    unevenness_mask: np.ndarray
-
-
-def detect_color_unevenness(
-    image: np.ndarray,
-    kernel_size: int = 31,
-    threshold: float = 30.0,
-) -> ColorAnalysis:
-    """Detect color unevenness by comparing local vs global color distribution.
-
-    Converts to Lab color space and compares each pixel's local neighborhood
-    mean against the global mean. Regions with large deviation are flagged.
-    """
-    lab = cv2.cvtColor(image, cv2.COLOR_BGR2Lab).astype(np.float32)
-
-    local_mean = cv2.blur(lab, (kernel_size, kernel_size))
-    global_mean = cv2.mean(lab)[:3]
-    global_arr = np.full_like(lab, global_mean)
-
-    diff = np.sqrt(np.sum((local_mean - global_arr) ** 2, axis=2))
-    mask = (diff > threshold).astype(np.uint8) * 255
-    score = float(np.mean(diff))
-
-    return ColorAnalysis(unevenness_score=score, unevenness_mask=mask)
 
 
 def match_histograms(source: np.ndarray, reference: np.ndarray) -> np.ndarray:
