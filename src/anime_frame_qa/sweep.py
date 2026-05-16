@@ -50,9 +50,11 @@ def run_sweep(
     sweep_config_path: Path,
     output_dir: Path,
     wandb_project: str | None = None,
+    reference_path: Path | None = None,
 ) -> list[SweepResult]:
     sweep_cfg = load_sweep_config(sweep_config_path)
     original = read_image(input_path)
+    reference = read_image(reference_path) if reference_path else original
     param_grid = sweep_cfg.get("parameters", [])
 
     wb_run = None
@@ -73,8 +75,8 @@ def run_sweep(
         config = _build_config(params)
         processed = process_image(original, config)
 
-        psnr = compute_psnr(original, processed)
-        ssim = compute_ssim(original, processed)
+        psnr = compute_psnr(reference, processed)
+        ssim = compute_ssim(reference, processed)
 
         out_path = output_dir / f"sweep_{i:03d}.png"
         write_image(out_path, processed)

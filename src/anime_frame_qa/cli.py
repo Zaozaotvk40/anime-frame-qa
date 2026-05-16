@@ -71,17 +71,19 @@ def process(
 @click.argument("sweep_config", type=click.Path(exists=True, path_type=Path))
 @click.option("-o", "--output-dir", type=click.Path(path_type=Path), required=True)
 @click.option("--wandb-project", type=str, default=None, help="W&B project name for logging")
+@click.option("--reference", "reference_path", type=click.Path(exists=True, path_type=Path), default=None, help="Ground truth image for PSNR/SSIM evaluation")
 def sweep(
     input_path: Path,
     sweep_config: Path,
     output_dir: Path,
     wandb_project: str | None,
+    reference_path: Path | None,
 ) -> None:
     """Run parameter sweep on an image."""
     from anime_frame_qa.sweep import run_sweep
 
     click.echo(f"Running sweep: {sweep_config}")
-    results = run_sweep(input_path, sweep_config, output_dir, wandb_project)
+    results = run_sweep(input_path, sweep_config, output_dir, wandb_project, reference_path)
 
     click.echo(f"\nResults ({len(results)} runs):")
     for i, r in enumerate(results):
