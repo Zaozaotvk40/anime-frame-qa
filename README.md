@@ -121,7 +121,12 @@ uv run pipeline sweep input.png config/sweep_example.yaml -o sweep_results/
 
 # W&Bログ付き
 uv run pipeline sweep input.png config/sweep_example.yaml -o sweep_results/ --wandb-project anime-qa
+
+# ground truth画像を指定（ノイズ付加前の元画像との比較）
+uv run pipeline sweep noisy.png config/sweep_example.yaml -o sweep_results/ --reference original.png --wandb-project anime-qa
 ```
+
+> **`--reference` について**: 指定しない場合はノイズあり入力画像との比較になるため、フィルタが強いほどPSNR/SSIMが下がります。元画像（ground truth）を指定することで「ノイズ除去によりどれだけ元画像に近づいたか」を正しく評価できます。
 
 指定可能なパラメータとデフォルト値:
 
@@ -202,3 +207,20 @@ uv run pytest tests/ -v
 - **PyYAML** — 設定ファイル
 - **W&B** (オプショナル) — 実験管理・パラメータ最適化
 - **rembg / simple-lama-inpainting** (オプショナル) — CNNベース処理
+
+## ノイズ除去サンプル
+
+### Gaussianノイズ除去（bilateral）
+![bilateral](docs/images/noisy_comp.png)
+
+### モスキートノイズ除去（nlm）
+![nlm](docs/images/mosq_comp.png)
+
+### バンディング除去（banding）
+![banding](docs/images/ban_comp.png)
+
+## パラメータスイープ結果
+
+bilateral / nlm / banding の3メソッド × 各6パターンのスイープ結果。
+
+[![W&B Report](https://img.shields.io/badge/W%26B-Report-yellow)](https://api.wandb.ai/links/bookman-freelance/s7gw0741)
