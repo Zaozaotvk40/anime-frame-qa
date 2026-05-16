@@ -38,7 +38,7 @@ uv sync
 # CNNモデル付き
 uv sync --extra cnn
 
-# W&B実験管理付き
+# W&B実験管理付き（Pillow含む、wandb.Image による画像ログに必要）
 uv sync --extra wandb
 ```
 

@@ -18,6 +18,7 @@ cnn = [
 ]
 wandb = [
     "wandb>=0.16",
+    "pillow>=10.0",
 ]
 
 [tool.uv]
