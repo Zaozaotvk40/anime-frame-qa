@@ -123,6 +123,21 @@ uv run pipeline sweep input.png config/sweep_example.yaml -o sweep_results/
 uv run pipeline sweep input.png config/sweep_example.yaml -o sweep_results/ --wandb-project anime-qa
 ```
 
+指定可能なパラメータとデフォルト値:
+
+| パラメータ             | デフォルト       | 対象メソッド    |
+| ----------------- | ----------- | --------- |
+| `denoise_method`  | `bilateral` | 共通        |
+| `d`               | `9`         | bilateral |
+| `sigma_color`     | `75.0`      | bilateral |
+| `sigma_space`     | `75.0`      | bilateral |
+| `h`               | `10.0`      | nlm       |
+| `template_window` | `7`         | nlm       |
+| `search_window`   | `21`        | nlm       |
+| `blur_radius`     | `5`         | banding   |
+| `edge_low`        | `30`        | banding   |
+| `edge_high`       | `90`        | banding   |
+
 ### 背景除去・インペインティング（CNN extras 必要）
 
 ```bash
