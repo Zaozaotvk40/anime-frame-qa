@@ -27,6 +27,18 @@ class PipelineConfig:
     deflicker_threshold: float = 0.3
     denoise_enabled: bool = False
     denoise_method: DenoiseMethod = DenoiseMethod.BILATERAL
+    # bilateral params
+    bilateral_d: int = 9
+    bilateral_sigma_color: float = 75.0
+    bilateral_sigma_space: float = 75.0
+    # nlm params
+    nlm_h: float = 10.0
+    nlm_template_window: int = 7
+    nlm_search_window: int = 21
+    # banding params
+    banding_blur_radius: int = 5
+    banding_edge_low: int = 30
+    banding_edge_high: int = 90
     extract_edges: bool = False
     color_consistency: bool = False
     color_window: int = 5
@@ -38,7 +50,30 @@ class PipelineConfig:
 def process_image(image: np.ndarray, config: PipelineConfig) -> np.ndarray:
     result = image
     if config.denoise_enabled:
-        result = denoise(result, method=config.denoise_method)
+        if config.denoise_method == DenoiseMethod.BILATERAL:
+            result = denoise(
+                result,
+                method=config.denoise_method,
+                d=config.bilateral_d,
+                sigma_color=config.bilateral_sigma_color,
+                sigma_space=config.bilateral_sigma_space,
+            )
+        elif config.denoise_method == DenoiseMethod.NLM:
+            result = denoise(
+                result,
+                method=config.denoise_method,
+                h=config.nlm_h,
+                template_window=config.nlm_template_window,
+                search_window=config.nlm_search_window,
+            )
+        elif config.denoise_method == DenoiseMethod.BANDING:
+            result = denoise(
+                result,
+                method=config.denoise_method,
+                blur_radius=config.banding_blur_radius,
+                edge_low=config.banding_edge_low,
+                edge_high=config.banding_edge_high,
+            )
     return result
 
 

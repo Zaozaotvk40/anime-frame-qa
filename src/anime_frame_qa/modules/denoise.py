@@ -9,6 +9,7 @@ Provides three methods targeting different artifact types:
 from __future__ import annotations
 
 from enum import Enum
+from typing import Any
 
 import cv2
 import numpy as np
@@ -22,6 +23,9 @@ class DenoiseMethod(str, Enum):
 
 def denoise_bilateral(
     image: np.ndarray,
+    # Defaults here are kept in sync with PipelineConfig. When called via the
+    # pipeline, PipelineConfig values are passed explicitly and these are never
+    # used. These defaults only apply when calling this function directly.
     d: int = 9,
     sigma_color: float = 75.0,
     sigma_space: float = 75.0,
@@ -37,6 +41,7 @@ def denoise_bilateral(
 
 def denoise_nlm(
     image: np.ndarray,
+    # Defaults kept in sync with PipelineConfig; only apply on direct calls.
     h: float = 10.0,
     template_window: int = 7,
     search_window: int = 21,
@@ -53,6 +58,7 @@ def denoise_nlm(
 
 def denoise_banding(
     image: np.ndarray,
+    # Defaults kept in sync with PipelineConfig; only apply on direct calls.
     blur_radius: int = 5,
     edge_low: int = 30,
     edge_high: int = 90,
@@ -80,12 +86,12 @@ def denoise_banding(
 def denoise(
     image: np.ndarray,
     method: DenoiseMethod = DenoiseMethod.BILATERAL,
-    **kwargs: object,
+    **kwargs: Any,
 ) -> np.ndarray:
     if method == DenoiseMethod.BILATERAL:
-        return denoise_bilateral(image, **kwargs)  # type: ignore[arg-type]
+        return denoise_bilateral(image, **kwargs)
     if method == DenoiseMethod.NLM:
-        return denoise_nlm(image, **kwargs)  # type: ignore[arg-type]
+        return denoise_nlm(image, **kwargs)
     if method == DenoiseMethod.BANDING:
-        return denoise_banding(image, **kwargs)  # type: ignore[arg-type]
+        return denoise_banding(image, **kwargs)
     raise ValueError(f"Unknown method: {method}")

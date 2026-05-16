@@ -28,6 +28,15 @@ def _build_config(params: dict[str, Any]) -> PipelineConfig:
     return PipelineConfig(
         denoise_enabled=params.get("denoise", True),
         denoise_method=method,
+        bilateral_d=params.get("d", 9),
+        bilateral_sigma_color=params.get("sigma_color", 75.0),
+        bilateral_sigma_space=params.get("sigma_space", 75.0),
+        nlm_h=params.get("h", 10.0),
+        nlm_template_window=params.get("template_window", 7),
+        nlm_search_window=params.get("search_window", 21),
+        banding_blur_radius=params.get("blur_radius", 5),
+        banding_edge_low=params.get("edge_low", 30),
+        banding_edge_high=params.get("edge_high", 90),
     )
 
 
