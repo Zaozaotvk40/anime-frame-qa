@@ -29,6 +29,19 @@
 > uv pip install --force-reinstall opencv-contrib-python-headless
 > ```
 
+## サンプル結果
+
+### Gaussianノイズ除去（bilateral）
+![bilateral](docs/images/noisy_comp.png)
+
+### モスキートノイズ除去（nlm）
+![nlm](docs/images/mosq_comp.png)
+
+### バンディング除去（banding）
+![banding](docs/images/ban_comp.png)
+
+bilateral / nlm / banding 各6パターンのパラメータスイープ結果 → [![W&B Report](https://img.shields.io/badge/W%26B-Report-yellow)](https://api.wandb.ai/links/bookman-freelance/s7gw0741)
+
 ## インストール
 
 ```bash
@@ -165,7 +178,7 @@ src/anime_frame_qa/
   sweep.py            パラメータスイープ + W&B連携
   modules/
     deflicker.py      フリッカー検出・抑制
-    denoise.py        ノイズ抑制（bilateral / NLM）
+    denoise.py        ノイズ抑制（bilateral / NLM / banding）
     edge.py           輪郭抽出・細線化・途切れ検出
     color.py          フレーム間色一貫性
     background.py     背景除去（isnet-anime、オプショナル）
@@ -208,19 +221,3 @@ uv run pytest tests/ -v
 - **W&B** (オプショナル) — 実験管理・パラメータ最適化
 - **rembg / simple-lama-inpainting** (オプショナル) — CNNベース処理
 
-## ノイズ除去サンプル
-
-### Gaussianノイズ除去（bilateral）
-![bilateral](docs/images/noisy_comp.png)
-
-### モスキートノイズ除去（nlm）
-![nlm](docs/images/mosq_comp.png)
-
-### バンディング除去（banding）
-![banding](docs/images/ban_comp.png)
-
-## パラメータスイープ結果
-
-bilateral / nlm / banding の3メソッド × 各6パターンのスイープ結果。
-
-[![W&B Report](https://img.shields.io/badge/W%26B-Report-yellow)](https://api.wandb.ai/links/bookman-freelance/s7gw0741)
