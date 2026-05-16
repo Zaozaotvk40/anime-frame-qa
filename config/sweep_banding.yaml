@@ -1,0 +1,36 @@
+parameters:
+  - denoise: true
+    denoise_method: banding
+    blur_radius: 3
+    edge_low: 30
+    edge_high: 90
+
+  - denoise: true
+    denoise_method: banding
+    blur_radius: 5
+    edge_low: 30
+    edge_high: 90
+
+  - denoise: true
+    denoise_method: banding
+    blur_radius: 5
+    edge_low: 50
+    edge_high: 150
+
+  - denoise: true
+    denoise_method: banding
+    blur_radius: 7
+    edge_low: 30
+    edge_high: 90
+
+  - denoise: true
+    denoise_method: banding
+    blur_radius: 7
+    edge_low: 50
+    edge_high: 150
+
+  - denoise: true
+    denoise_method: banding
+    blur_radius: 10
+    edge_low: 50
+    edge_high: 150
