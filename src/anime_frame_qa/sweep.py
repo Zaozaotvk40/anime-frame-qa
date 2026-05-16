@@ -83,8 +83,15 @@ def run_sweep(
         results.append(result)
 
         if wb_run:
+            import cv2
             import wandb
-            wandb.log({"psnr": psnr, "ssim": ssim, **params, "step": i})
+            wandb.log({
+                "psnr": psnr,
+                "ssim": ssim,
+                "result": wandb.Image(cv2.cvtColor(processed, cv2.COLOR_BGR2RGB)),
+                **params,
+                "step": i,
+            })
 
     if wb_run:
         import wandb
