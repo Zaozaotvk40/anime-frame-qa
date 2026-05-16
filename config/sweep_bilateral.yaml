@@ -1,0 +1,36 @@
+parameters:
+  - denoise: true
+    denoise_method: bilateral
+    d: 5
+    sigma_color: 30.0
+    sigma_space: 30.0
+
+  - denoise: true
+    denoise_method: bilateral
+    d: 5
+    sigma_color: 50.0
+    sigma_space: 50.0
+
+  - denoise: true
+    denoise_method: bilateral
+    d: 9
+    sigma_color: 50.0
+    sigma_space: 50.0
+
+  - denoise: true
+    denoise_method: bilateral
+    d: 9
+    sigma_color: 75.0
+    sigma_space: 75.0
+
+  - denoise: true
+    denoise_method: bilateral
+    d: 15
+    sigma_color: 75.0
+    sigma_space: 75.0
+
+  - denoise: true
+    denoise_method: bilateral
+    d: 15
+    sigma_color: 100.0
+    sigma_space: 100.0

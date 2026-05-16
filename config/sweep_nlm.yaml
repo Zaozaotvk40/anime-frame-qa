@@ -1,0 +1,24 @@
+parameters:
+  - denoise: true
+    denoise_method: nlm
+    h: 3.0
+
+  - denoise: true
+    denoise_method: nlm
+    h: 5.0
+
+  - denoise: true
+    denoise_method: nlm
+    h: 10.0
+
+  - denoise: true
+    denoise_method: nlm
+    h: 15.0
+
+  - denoise: true
+    denoise_method: nlm
+    h: 20.0
+
+  - denoise: true
+    denoise_method: nlm
+    h: 30.0
