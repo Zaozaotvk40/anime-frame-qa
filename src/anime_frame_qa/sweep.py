@@ -26,9 +26,6 @@ def _build_config(params: dict[str, Any]) -> PipelineConfig:
     if isinstance(method, str):
         method = DenoiseMethod(method)
     return PipelineConfig(
-        deflicker=params.get("deflicker", False),
-        deflicker_alpha=params.get("deflicker_alpha", 0.7),
-        deflicker_threshold=params.get("deflicker_threshold", 0.3),
         denoise_enabled=params.get("denoise", True),
         denoise_method=method,
     )
