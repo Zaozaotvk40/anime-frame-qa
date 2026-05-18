@@ -73,9 +73,6 @@ uv run pipeline process input.png --denoise --denoise-method nlm -o output.png
 uv run pipeline process input.png --extract-edges -o output.png
 # → output.png にギャップ可視化済みのthinned画像を出力
 # → CLI に "edges: N gap(s) detected" を表示
-
-# 全コアモジュール適用
-uv run pipeline process input.png --all -o output.png
 ```
 
 ### 画像のバッチ処理
@@ -100,9 +97,11 @@ uv run pipeline process input.mp4 --deflicker --denoise -o output.mp4
 # フレーム間色一貫性
 uv run pipeline process input.mp4 --color-consistency -o output.mp4
 
-# 全コアモジュール適用
+# 全コアモジュール適用（deflicker + denoise + color-consistency）
 uv run pipeline process input.mp4 --all -o output.mp4
 ```
+
+> **`--all` について**: 動画向けオプションです。`--deflicker`、`--denoise`、`--color-consistency` をまとめて有効にします。`--extract-edges` は含まれません（出力が可視化画像になるため独立して使用してください）。
 
 ### YAML設定ファイルの利用
 

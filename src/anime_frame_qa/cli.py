@@ -30,7 +30,7 @@ def main() -> None:
 @click.option("--remove-bg", is_flag=True, help="Remove background (requires cnn extras)")
 @click.option("--inpaint", is_flag=True, help="Inpaint masked regions (requires cnn extras)")
 @click.option("--inpaint-mask", type=click.Path(exists=True, path_type=Path), help="Mask image for inpainting (white=repair)")
-@click.option("--all", "all_modules", is_flag=True, help="Enable all core OpenCV modules (deflicker and color-consistency apply to video only)")
+@click.option("--all", "all_modules", is_flag=True, help="Enable all core OpenCV modules for video (deflicker, denoise, color-consistency)")
 def process(
     input_path: Path,
     output_path: Path,
@@ -54,7 +54,7 @@ def process(
             deflicker=deflicker or all_modules,
             denoise_enabled=denoise_enabled or all_modules,
             denoise_method=DenoiseMethod(denoise_method),
-            extract_edges=extract_edges or all_modules,
+            extract_edges=extract_edges,
             color_consistency=color_consistency or all_modules,
             remove_bg=remove_bg,
             inpaint=inpaint,
